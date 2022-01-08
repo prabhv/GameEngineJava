@@ -1,10 +1,11 @@
-package TestEngine;
+package testEngine;
 
 import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import utils.Time;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -16,10 +17,34 @@ public class Window {
 
     private static Window window = null;
 
+    private static Scene currentScene;
+
+    public float r, g, b, a;
+    private boolean fadetoBlack = false;
+
     private Window(){
         this.width = 1920;
         this.height = 1080;
         this.title = "Window";
+        this.r = 1;
+        this.g = 1;
+        this.b = 1;
+        this.a = 1;
+    }
+
+    public static void changeScene(int newScene){
+        switch (newScene){
+            case 0:
+                currentScene = new LevelEditorScene();
+                //currentScene.init()
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false: "Unknown Scene '" + newScene + "'";
+                break;
+        }
     }
 
     public static Window get(){
@@ -34,6 +59,15 @@ public class Window {
 
         init();
         loop();
+
+        //Free mem as these are C++ bindings and needs mem destroy.
+
+        glfwFreeCallbacks(glfwWindow);
+        glfwDestroyWindow(glfwWindow);
+
+        //free GLFW
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
     public void init(){
@@ -57,6 +91,11 @@ public class Window {
             throw new IllegalStateException("Failed to create GLFW window");
         }
 
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
+        glfwSetKeyCallback(glfwWindow, KeyListeners::keyCallback);
+
         //OPenGL context current
         glfwMakeContextCurrent(glfwWindow);
 
@@ -67,17 +106,32 @@ public class Window {
         glfwShowWindow(glfwWindow);
 
         GL.createCapabilities();
+
+        Window.changeScene(0);
     }
 
     public void loop(){
+        float beginTime = Time.getTime();
+        float endTime;
+        float dt = -1.0f;
+
         while (!glfwWindowShouldClose(glfwWindow)){
             //poll events
 
             glfwPollEvents();
 
-            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            if ( dt >= 0 ){
+                currentScene.update(dt);
+            }
+
             glfwSwapBuffers(glfwWindow);
+
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
         }
     }
 }
