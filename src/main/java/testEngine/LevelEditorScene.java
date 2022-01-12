@@ -1,7 +1,9 @@
 package testEngine;
 
 
+import components.Sprite;
 import components.SpriteRenderer;
+import components.SpriteSheet;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import utils.AssetPool;
@@ -14,31 +16,26 @@ public class LevelEditorScene extends Scene{
 
     @Override
     public void init(){
+
+        loadResources();
         this.camera = new Camera(new Vector2f());
 
-        int xOffset = 10;
-        int yOffset = 10;
+        SpriteSheet sprites = AssetPool.getSpriteSheet("assets/images/spritesheet/spriteSheet.png");
 
-        float totalWidth = (float) (600 - xOffset * 2);
-        float totalHeight = (float) (300 - yOffset * 2);
-        float sizeX = totalWidth / 100.f;
-        float sizeY = totalHeight / 100.0f;
+        GameObject obj1 = new GameObject("Object1", new Transform(new Vector2f(100, 100), new Vector2f(100, 100)));
+        obj1.addComponent(new SpriteRenderer(sprites.getSprite(0)));
+        this.addGameObjectToScene(obj1);
 
-        for (int x = 0; x < 100; x++){
-            for (int y=0; y<100; y++){
-                float xPos = xOffset + (x * sizeX);
-                float yPos = yOffset + (y * sizeY);
+        GameObject obj2 = new GameObject("Object2", new Transform(new Vector2f(400, 100), new Vector2f(100, 100)));
+        obj2.addComponent(new SpriteRenderer(sprites.getSprite(5)));
+        this.addGameObjectToScene(obj2);
 
-                GameObject go = new GameObject("obj" + x + "" + y, new Transform(new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
-                go.addComponent(new SpriteRenderer(new Vector4f(xPos/totalWidth, yPos/totalHeight, 1, 1)));
-                this.addGameObjectToScene(go);
-            }
-        }
-        loadResources();
     }
 
     private void loadResources(){
         AssetPool.getShader("assets/shaders/default.glsl");
+        AssetPool.addSpriteSheet("assets/images/spritesheet/spriteSheet.png",
+                new SpriteSheet(AssetPool.getTexture("assets/images/spritesheet/spriteSheet.png"), 16, 16, 26, 0));
     }
 
     @Override
