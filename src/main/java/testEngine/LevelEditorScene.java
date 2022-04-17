@@ -3,6 +3,7 @@ package testEngine;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import components.RigidBody;
 import components.Sprite;
 import components.SpriteRenderer;
 import components.SpriteSheet;
@@ -27,6 +28,7 @@ public class LevelEditorScene extends Scene{
         this.camera = new Camera(new Vector2f());
 
         if (levelLoaded){
+            this.activeGameObject = gameObjects.get(0);
             return;
         }
 
@@ -36,6 +38,7 @@ public class LevelEditorScene extends Scene{
         SpriteRenderer obj1SpriteRenderer = new SpriteRenderer();
         obj1SpriteRenderer.setColor(new Vector4f(1,0,0,1));
         obj1.addComponent(obj1SpriteRenderer);
+        obj1.addComponent(new RigidBody());
         this.addGameObjectToScene(obj1);
         this.activeGameObject = obj1;
 
@@ -46,12 +49,15 @@ public class LevelEditorScene extends Scene{
         obj1SpriteRenderer.setSprite(obj2Sprite);
         obj2.addComponent(obj2SpriteRenderer);
         this.addGameObjectToScene(obj2);
+
     }
 
     private void loadResources(){
         AssetPool.getShader("assets/shaders/default.glsl");
+        AssetPool.getTexture("assets/images/blendImage2.png");
         AssetPool.addSpriteSheet("assets/images/spritesheet/spriteSheet.png",
                 new SpriteSheet(AssetPool.getTexture("assets/images/spritesheet/spriteSheet.png"), 16, 16, 26, 0));
+
     }
 
     @Override
