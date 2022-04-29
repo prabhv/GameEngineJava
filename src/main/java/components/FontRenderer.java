@@ -1,7 +1,5 @@
 package components;
 
-import testEngine.Component;
-
 public class FontRenderer extends Component {
 
     public FontRenderer(){

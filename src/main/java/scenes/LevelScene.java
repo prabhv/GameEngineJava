@@ -1,6 +1,9 @@
-package testEngine;
+package scenes;
 
-public class LevelScene extends Scene{
+import scenes.Scene;
+import testEngine.Window;
+
+public class LevelScene extends Scene {
 
     public LevelScene(){
         System.out.println("Inside Level Scene");

@@ -1,11 +1,15 @@
-package testEngine;
+package scenes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import components.Component;
+import components.ComponentDeserializer;
 import imgui.ImGui;
 import renderer.Renderer;
+import testEngine.Camera;
+import testEngine.GameObject;
+import testEngine.GameObjectDeserializer;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +20,7 @@ import java.util.List;
 public abstract class Scene {
 
     protected Renderer renderer = new Renderer();
-    protected  Camera camera;
+    protected Camera camera;
     private boolean isRunning = false;
     protected List<GameObject> gameObjects = new ArrayList<>();
     protected GameObject activeGameObject = null;
@@ -99,11 +103,26 @@ public abstract class Scene {
         }
 
         if ( !inFile.equals("")){
+            int maxGoId = -1;
+            int maxCompId = -1;
             GameObject[] gameObjects = gson.fromJson(inFile, GameObject[].class);
             for (GameObject go : gameObjects){
                 addGameObjectToScene(go);
+
+                for (Component c : go.getAllComponents()) {
+                    if(c.getUid() > maxCompId){
+                        maxCompId = c.getUid();
+                    }
+                }
+                if (go.getUid() > maxGoId){
+                    maxGoId = go.getUid();
+                }
             }
 
+            maxCompId++;
+            maxCompId++;
+            GameObject.init(maxGoId);
+            Component.init(maxCompId);
             this.levelLoaded = true;
         }
     }

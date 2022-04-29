@@ -4,11 +4,7 @@ import imgui.ImGui;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import renderer.Texture;
-import testEngine.Component;
 import testEngine.Transform;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 public class SpriteRenderer extends Component {
 

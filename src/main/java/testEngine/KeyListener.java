@@ -2,19 +2,19 @@ package testEngine;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class KeyListeners {
-    private static KeyListeners instance;
+public class KeyListener {
+    private static KeyListener instance;
     private boolean keyPressed[] = new boolean[350];
 
-    private KeyListeners(){
+    private KeyListener(){
 
     }
 
-    public static KeyListeners get(){
-        if (KeyListeners.instance == null){
-            KeyListeners.instance = new KeyListeners();
+    public static KeyListener get(){
+        if (KeyListener.instance == null){
+            KeyListener.instance = new KeyListener();
         }
-        return KeyListeners.instance;
+        return KeyListener.instance;
     }
 
     public static void keyCallback(long window, int key, int scancode, int action, int mods){
